@@ -1,6 +1,6 @@
 <?php
 
-namespace SiteOrigin\KernelCrawler;
+namespace GregPriday\APICrawler;
 
 use Closure;
 use Generator;
@@ -16,11 +16,7 @@ class Crawler extends LazyCollection
 {
 
     public PageQueue $urlQueue;
-
-    /**
-     * @var \Illuminate\Support\HigherOrderCollectionProxy|mixed
-     */
-    private $kernel;
+    private HttpKernel $kernel;
 
     public function __construct(array $startingUrls = ['/'])
     {
@@ -58,9 +54,10 @@ class Crawler extends LazyCollection
      *
      * @param \Illuminate\Contracts\Http\Kernel|null $kernel
      */
-    public function setKernel(HttpKernel $kernel = null)
+    public function setKernel(HttpKernel $kernel = null): static
     {
         $this->kernel = $kernel;
+        return $this;
     }
 
     /**
@@ -68,16 +65,27 @@ class Crawler extends LazyCollection
      *
      * @param Response $response
      */
-    protected function addUrlsFromResponse(Response $response)
+    protected function addUrlsFromResponse(Response $response): void
     {
-        $newUrls = [];
+        // Decode the JSON response
+        $data = json_decode($response->getContent(), true);
 
-        $crawler = new DomCrawler($response->getContent());
-        $crawler->filterXPath('//a')->each(function($link) use (& $newUrls){
-            $url = Page::urlToPath($link->attr('href'));
-            if($url !== false) $newUrls[] = $url;
-        });
-        $newUrls = array_unique($newUrls);
-        $this->urlQueue->push($newUrls);
+        // This recursive function will search for all 'href' keys in the nested arrays
+        $urls = [];
+        $iterator = function ($array) use (&$iterator, &$urls) {
+            foreach ($array as $key => $value) {
+                if ($key === 'href' && is_string($value)) {
+                    $urls[] = $value; // Add the URL to the list
+                } elseif (is_array($value)) {
+                    $iterator($value); // Recurse into the array
+                }
+            }
+        };
+
+        // Start the recursion
+        $iterator($data);
+
+        // Add unique URLs to the queue
+        $this->urlQueue->push(array_unique($urls));
     }
 }

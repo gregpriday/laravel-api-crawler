@@ -1,6 +1,6 @@
 {
-    "name": "siteorigin/laravel-kernel-crawler",
-    "description": "Crawls a Laravel site using internal Kernel.",
+    "name": "gregpriday/laravel-api-crawler",
+    "description": "Crawls a site's API using internal Kernel.",
     "type": "package",
     "license": "MIT",
     "require": {
@@ -22,21 +22,21 @@
     ],
     "autoload": {
         "psr-4": {
-            "SiteOrigin\\KernelCrawler\\": "src/"
+            "GregPriday\\APICrawler\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "SiteOrigin\\KernelCrawler\\Tests\\": "tests/"
+            "GregPriday\\APICrawler\\Tests\\": "tests/"
         }
     },
     "extras" : {
         "laravel" : {
             "providers": [
-                "SiteOrigin\\KernelCrawler\\CrawlerServiceProvider"
+                "GregPriday\\APICrawler\\CrawlerServiceProvider"
             ],
             "aliases": {
-                "Crawler": "SiteOrigin\\KernelCrawler\\Facades\\Crawler"
+                "Crawler": "GregPriday\\APICrawler\\Facades\\Crawler"
             }
         }
     },

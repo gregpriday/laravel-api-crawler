@@ -1,6 +1,6 @@
 <?php
 
-namespace SiteOrigin\KernelCrawler;
+namespace GregPriday\APICrawler;
 
 class PageQueue
 {
@@ -19,7 +19,7 @@ class PageQueue
 
     /**
      * @param array|mixed $urls
-     * @return \SiteOrigin\KernelCrawler\PageQueue
+     * @return \GregPriday\APICrawler\PageQueue
      */
     public function push(array $urls): PageQueue
     {

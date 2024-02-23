@@ -1,6 +1,6 @@
 <?php
 
-namespace SiteOrigin\KernelCrawler;
+namespace GregPriday\APICrawler;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

@@ -1,10 +1,10 @@
 <?php
 
-namespace SiteOrigin\KernelCrawler;
+namespace GregPriday\APICrawler;
 
 use Illuminate\Support\ServiceProvider;
-use SiteOrigin\KernelCrawler\Commands\CrawlSite;
-use SiteOrigin\KernelCrawler\Commands\GenerateSitemap;
+use GregPriday\APICrawler\Commands\CrawlerSync;
+use GregPriday\APICrawler\Commands\GenerateSitemap;
 
 class CrawlerServiceProvider extends ServiceProvider
 {
@@ -13,7 +13,7 @@ class CrawlerServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CrawlSite::class,
+                CrawlerSync::class,
                 GenerateSitemap::class
             ]);
         }
