@@ -1,11 +1,11 @@
 <?php
 
-namespace SiteOrigin\KernelCrawler\Tests\Unit;
+namespace GregPriday\APICrawler\Tests\Unit;
 
-use SiteOrigin\KernelCrawler\Crawler;
-use SiteOrigin\KernelCrawler\Exchange;
-use SiteOrigin\KernelCrawler\Tests\App\Article;
-use SiteOrigin\KernelCrawler\Tests\TestCase;
+use GregPriday\APICrawler\Crawler;
+use GregPriday\APICrawler\Exchange;
+use GregPriday\APICrawler\Tests\App\Article;
+use GregPriday\APICrawler\Tests\TestCase;
 
 class CrawlerTest extends TestCase
 {

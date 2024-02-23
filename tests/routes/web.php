@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use SiteOrigin\KernelCrawler\Tests\App\Article;
-use SiteOrigin\KernelCrawler\Tests\App\ArticleController;
+use GregPriday\APICrawler\Tests\App\Article;
 
 // Routes that should be cached.
 

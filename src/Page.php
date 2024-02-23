@@ -7,10 +7,12 @@ use Illuminate\Support\Str;
 class Page
 {
     public string $url;
+    public int $depth; // Add depth attribute
 
-    public function __construct(string $url)
+    public function __construct(string $url, int $depth = 0)
     {
         $this->url = self::urlToPath($url);
+        $this->depth = $depth; // Initialize depth
     }
 
     /**
@@ -21,18 +23,10 @@ class Page
      */
     public static function urlToPath($url)
     {
-        $url = url($url);
-        $appUrl = config('app.url');
-
-        // Remove external URLs
-        if (! Str::startsWith($url, [$appUrl, '/', 'http://localhost'])) {
-            return false;
-        }
-
-        if (Str::startsWith($url, [$appUrl, 'http://localhost'])) {
-            $url = Str::replaceFirst($appUrl, '', $url);
-            $url = Str::replaceFirst('http://localhost', '', $url);
-        }
+        // Remove the http://host part from any url using parse_url, keep the path and query string
+        $url = parse_url($url);
+        $url = (!empty($url['path']) ? $url['path'] : '/') .
+            (!empty($url['query']) ? '?' . $url['query'] : '');
 
         if(empty($url)) return '/';
         else return $url;

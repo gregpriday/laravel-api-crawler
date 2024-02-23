@@ -4,7 +4,6 @@ namespace GregPriday\APICrawler;
 
 use Illuminate\Support\ServiceProvider;
 use GregPriday\APICrawler\Commands\CrawlerSync;
-use GregPriday\APICrawler\Commands\GenerateSitemap;
 
 class CrawlerServiceProvider extends ServiceProvider
 {
@@ -14,7 +13,6 @@ class CrawlerServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CrawlerSync::class,
-                GenerateSitemap::class
             ]);
         }
     }

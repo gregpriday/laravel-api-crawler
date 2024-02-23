@@ -4,33 +4,31 @@ namespace GregPriday\APICrawler;
 
 class PageQueue
 {
-    private array $items;
+    private array $pages;
     private array $urls;
 
     public function __construct(array $urls)
     {
-        $this->items = [];
+        $this->pages = [];
         $this->urls = [];
 
         if(!is_array($urls)) $urls = [$urls];
 
-        $this->push($urls);
+        $this->push(array_map(fn($url) => new Page($url), $urls));
     }
 
     /**
      * @param array|mixed $urls
      * @return \GregPriday\APICrawler\PageQueue
      */
-    public function push(array $urls): PageQueue
+    public function push(array $pages): PageQueue
     {
-        $items = array_map(fn($url) => new Page($url), $urls);
-
-        foreach ($items as $item) {
+        foreach ($pages as $page) {
             // Skip URLs that are already in the queue
-            if(isset($this->urls[$item->url])) continue;
+            if(isset($this->urls[$page->url])) continue;
 
-            $this->items[] = $item;
-            $this->urls[$item->url] = $item;
+            $this->pages[] = $page;
+            $this->urls[$page->url] = $page;
         }
 
         return $this;
@@ -38,12 +36,12 @@ class PageQueue
 
     public function shift(): Page
     {
-        return array_shift($this->items);
+        return array_shift($this->pages);
     }
 
     public function isEmpty(): bool
     {
-        return empty($this->items);
+        return empty($this->pages);
     }
 
 }

@@ -5,6 +5,7 @@ namespace GregPriday\APICrawler;
 use Closure;
 use Generator;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\LazyCollection;
@@ -12,16 +13,17 @@ use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
-class Crawler extends LazyCollection
+class Crawler
 {
 
     public PageQueue $urlQueue;
     private HttpKernel $kernel;
+    private int $maxDepth;
 
-    public function __construct(array $startingUrls = ['/'])
+    public function __construct(array $startingUrls = ['/'], $maxDepth = PHP_INT_MAX)
     {
         $this->urlQueue = new PageQueue($startingUrls);
-        parent::__construct(Closure::fromCallable([$this, 'crawl']));
+        $this->maxDepth = $maxDepth;
     }
 
     /**
@@ -30,23 +32,28 @@ class Crawler extends LazyCollection
      * @return \Generator
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    private function crawl(): Generator
+    public function crawl(): LazyCollection
     {
-        if(empty($this->kernel)) $this->kernel = app()->make(HttpKernel::class);
+        return new LazyCollection(function(){
+            if(empty($this->kernel)) $this->kernel = app()->make(HttpKernel::class);
 
-        while (!$this->urlQueue->isEmpty()) {
-            $item = $this->urlQueue->shift();
+            while (!$this->urlQueue->isEmpty()) {
+                $page = $this->urlQueue->shift();
+                $currentDepth = $page->depth;
 
-            // Get the response
-            $symfonyRequest = SymfonyRequest::create(config('app.url') . $item->url);
-            $request = Request::createFromBase($symfonyRequest);
+                // Get the response
+                $symfonyRequest = SymfonyRequest::create($page->url);
+                $request = Request::createFromBase($symfonyRequest);
 
-            $response = $this->kernel->handle($request);
-            if($response instanceof Response) {
-                $this->addUrlsFromResponse($response);
-                yield new Exchange($request, $response);
+                $response = $this->kernel->handle($request);
+                if($response instanceof JsonResponse) {
+                    if ($currentDepth < $this->maxDepth) {
+                        $this->addUrlsFromResponse($response, $currentDepth + 1);
+                    }
+                    yield new Exchange($request, $response);
+                }
             }
-        }
+        });
     }
 
     /**
@@ -65,16 +72,16 @@ class Crawler extends LazyCollection
      *
      * @param Response $response
      */
-    protected function addUrlsFromResponse(Response $response): void
+    protected function addUrlsFromResponse(JsonResponse $response, int $currentDepth): void
     {
         // Decode the JSON response
-        $data = json_decode($response->getContent(), true);
+        $data = $response->getData(true);
 
         // This recursive function will search for all 'href' keys in the nested arrays
         $urls = [];
         $iterator = function ($array) use (&$iterator, &$urls) {
             foreach ($array as $key => $value) {
-                if ($key === 'href' && is_string($value)) {
+                if ($key === 'url' && is_string($value)) {
                     $urls[] = $value; // Add the URL to the list
                 } elseif (is_array($value)) {
                     $iterator($value); // Recurse into the array
@@ -85,7 +92,12 @@ class Crawler extends LazyCollection
         // Start the recursion
         $iterator($data);
 
-        // Add unique URLs to the queue
-        $this->urlQueue->push(array_unique($urls));
+        // Add unique URLs to the queue with incremented depth
+        $urls = array_unique($urls);
+        $urls = array_filter($urls, fn($url) => ! preg_match('/\.(jpg|jpeg|png|gif|bmp|svg)$/i', $url));
+
+        foreach ($urls as $url) {
+            $this->urlQueue->push([new Page($url, $currentDepth + 1)]);
+        }
     }
 }

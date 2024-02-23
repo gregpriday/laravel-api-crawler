@@ -1,9 +1,9 @@
 <?php
 
-namespace SiteOrigin\KernelCrawler\Tests\Database\Factories;
+namespace GregPriday\APICrawler\Tests\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use SiteOrigin\KernelCrawler\Tests\App\Article;
+use GregPriday\APICrawler\Tests\App\Article;
 
 class ArticleFactory extends Factory
 {

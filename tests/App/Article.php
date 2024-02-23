@@ -1,6 +1,6 @@
 <?php
 
-namespace SiteOrigin\KernelCrawler\Tests\App;
+namespace GregPriday\APICrawler\Tests\App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

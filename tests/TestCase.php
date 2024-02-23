@@ -1,10 +1,10 @@
 <?php
 
-namespace SiteOrigin\KernelCrawler\Tests;
+namespace GregPriday\APICrawler\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use SiteOrigin\KernelCrawler\CrawlerServiceProvider;
+use GregPriday\APICrawler\CrawlerServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
@@ -37,7 +37,7 @@ class TestCase extends OrchestraTestCase
         include __DIR__ . '/routes/web.php';
 
         Factory::guessFactoryNamesUsing(function (string $modelName) {
-            return 'SiteOrigin\KernelCrawler\Tests\Database\Factories\\'.class_basename($modelName).'Factory';
+            return 'GregPriday\APICrawler\Tests\Database\Factories\\'.class_basename($modelName).'Factory';
         });
     }
 }

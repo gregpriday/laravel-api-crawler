@@ -12,15 +12,15 @@ It's currently compatible with Laravel 8.0+
 
 To publish the configuration files, use:
 
-`php artisan vendor:publish --provider="SiteOrigin\KernelCrawler\CrawlerServiceProvider" --tag="config"`
+`php artisan vendor:publish --provider="SiteOrigin\APICrawler\CrawlerServiceProvider" --tag="config"`
 
 ## Usage
 
 Here's a very basic use example:
 
 ```php
-use SiteOrigin\KernelCrawler\Crawler;
-use SiteOrigin\KernelCrawler\Exchange;
+use SiteOrigin\APICrawler\Crawler;
+use SiteOrigin\APICrawler\Exchange;
 
 
 $crawler = new Crawler();
