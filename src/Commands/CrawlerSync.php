@@ -30,6 +30,8 @@ class CrawlerSync extends Command
         $connection = Redis::connection('api');
         $crawler = new Crawler([$url], $depth);
 
+        $startTime = microtime(true);
+
         $this->output->progressStart();
         $crawler
             ->crawl()
@@ -50,5 +52,7 @@ class CrawlerSync extends Command
             });
 
         $this->output->progressFinish();
+
+        $this->info('Crawling complete. Synced in ' . number_format(microtime(true) - $startTime, 2) . ' seconds.');
     }
 }
