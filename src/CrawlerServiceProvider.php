@@ -10,11 +10,6 @@ class CrawlerServiceProvider extends ServiceProvider
 
     public function register()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                CrawlerSync::class,
-            ]);
-        }
     }
 
     public function boot()
